@@ -284,5 +284,31 @@
                 }
             ]
         }
+    },
+    {
+        "name": "24hr breakfast",
+        "message": "Went to this diner expecting a decent meal. The food was pretty average, nothing that stood out or made it memorable. The service, however, was good. The staff were friendly and attentive, which made the experience pleasant. Unfortunately, the price was a bit on the expensive side for what you get. And the view? A brick wall. Not exactly scenic. Overall, it was a fine experience, but I don’t think I’ll be rushing back any time soon given the cost and lack of a view.",
+        "analysis": {
+            "food": [
+                {
+                    "label": "Neutral"
+                }
+            ],
+            "service": [
+                {
+                    "label": "Positive"
+                }
+            ],
+            "atmosphere": [
+                {
+                    "label": "Negative"
+                }
+            ],
+            "cost": [
+                {
+                    "label": "Negative"
+                }
+            ]
+        }
     }
 ]
