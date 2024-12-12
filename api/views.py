@@ -37,7 +37,7 @@ def get_analysis(request):
 
 @api_view(['GET'])
 def get_summary(request):
-    api_key = "your api key here"
+    api_key = "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"
 
     try:
         # Pull all data from the database
@@ -55,7 +55,7 @@ def get_summary(request):
                 f"- Atmosphere: {analysis.analysis.get('atmosphere', 'N/A')}\n"
                 f"- Cost: {analysis.analysis.get('cost', 'N/A')}\n"
             )
-        prompt = "Summarize the following restaurant reviews and their aspects(Convert to percentages from 0-100 (no decimals), (100 good, 0 bad), (an overall average for each aspect), tell the user how review there were for each resturant): \n\n" + "\n\n".join(formatted_data)
+        prompt = "Summarize the following restaurant reviews and their aspects(Convert to percentages from 0-100 (no decimals), (100 good, 0 bad), (an overall average for each aspect), tell the user how review there were for each): \n\n" + "\n\n".join(formatted_data)
 
         # Initialize the Groq client
         client = Groq(api_key=api_key)
