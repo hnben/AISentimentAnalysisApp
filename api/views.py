@@ -55,7 +55,7 @@ def get_analysis(request):
 
 @api_view(['GET'])
 def get_summary(request):
-    api_key = "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"
+    api_key = "your api-key here"
 
     try:
         # Pull all data from the database
