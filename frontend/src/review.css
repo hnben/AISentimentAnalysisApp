@@ -1,0 +1,119 @@
+/* Global Styling */
+body {
+  font-family: 'Arial', sans-serif;
+  background-color: #f0f0f0; /* Light gray background */
+  margin: 0;
+  padding: 0;
+  color: #333;
+}
+
+/* Container for the whole page */
+.reviews-container {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr); /* Max 2 items per row */
+  gap: 2rem;
+  padding: 2rem;
+  max-width: 1200px;
+  margin: auto;
+}
+
+/* Styling for each review column */
+.reviews-column {
+  background-color: #2c3e50; /* Darker background for the cards */
+  border-radius: 10px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+  padding: 20px;
+  overflow: hidden;
+  color: white; /* Text color for contrast */
+  transition: transform 0.3s ease-in-out;
+}
+
+.reviews-column:hover {
+  transform: translateY(-5px); /* Slight hover effect */
+}
+
+/* Title Styling */
+h1 {
+  font-size: 2.5rem;
+  color: #2c3e50;
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+/* Individual Review Styling */
+.review-card h3 {
+  font-size: 1.5rem;
+  color: #ecf0f1;
+  margin-bottom: 10px;
+}
+
+.review-card p {
+  font-size: 1rem;
+  color: #bdc3c7;
+  margin-bottom: 20px;
+  line-height: 1.6;
+}
+
+/* Analysis Section */
+.analysis-container {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+/* Styling for the Analysis Boxes */
+.analysis-box {
+  background-color: #34495e; /* Darker background for the analysis box */
+  border-radius: 8px;
+  padding: 15px;
+  width: 45%;
+}
+
+.analysis-box h4 {
+  font-size: 1.1rem;
+  color: #ecf0f1;
+  margin-bottom: 15px;
+}
+
+.analysis-box strong {
+  color: #ecf0f1;
+  font-weight: bold;
+  display: block;
+  margin-bottom: 5px;
+}
+
+.analysis-box p {
+  margin-bottom: 10px;
+}
+
+/* Color-coding for analysis labels */
+.analysis-box .positive {
+  color: #27ae60; /* Green for Positive */
+}
+
+.analysis-box .neutral {
+  color: #f39c12; /* Yellow for Neutral */
+}
+
+.analysis-box .negative {
+  color: #e74c3c; /* Red for Negative */
+}
+
+/* Loading Text Styling */
+.loading {
+  text-align: center;
+  font-size: 1.5rem;
+  color: #3498db;
+  padding: 2rem;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .reviews-container {
+    grid-template-columns: 1fr; /* Stack reviews on smaller screens */
+  }
+
+  .analysis-container {
+    flex-direction: column;
+  }
+}

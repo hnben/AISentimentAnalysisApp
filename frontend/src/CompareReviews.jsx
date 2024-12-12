@@ -1,78 +1,86 @@
 import { useState, useEffect } from 'react';
+import './review.css'
 
 const CompareReviews = () => {
-  const [modelReviews, setModelReviews] = useState([]);
-  const [actualReviews, setActualReviews] = useState([]);
-  const [error, setError] = useState('');
+  const [modelData, setModelData] = useState(null);
+  const [actualData, setActualData] = useState(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Fetch model's review data
-    const fetchModelData = async () => {
-      try {
-        const response = await fetch('http://127.0.0.1:8000/api/v1/data/');
-        if (!response.ok) {
-          throw new Error('Failed to fetch model reviews');
-        }
-        const data = await response.json();
-        setModelReviews(data);
-      } catch (err) {
-        setError('Error fetching model reviews');
-      }
+    // Fetch the model data and actual data
+    const fetchData = async () => {
+      const modelResponse = await fetch('http://127.0.0.1:8000/api/v1/data/');
+      const actualResponse = await fetch('http://127.0.0.1:8000/api/v1/actual/');
+
+      const modelData = await modelResponse.json();
+      const actualData = await actualResponse.json();
+
+      setModelData(modelData);
+      setActualData(actualData);
+      setLoading(false);
     };
 
-    // Fetch actual reviews data
-    const fetchActualData = async () => {
-      try {
-        const response = await fetch('http://127.0.0.1:8000/api/v1/actual/');
-        if (!response.ok) {
-          throw new Error('Failed to fetch actual reviews');
-        }
-        const data = await response.json();
-        setActualReviews(data);
-      } catch (err) {
-        setError('Error fetching actual reviews');
-      }
-    };
-
-    fetchModelData();
-    fetchActualData();
+    fetchData();
   }, []);
 
-  if (error) {
-    return <div>{error}</div>;
+  if (loading) {
+    return <div className="loading">Loading...</div>;
   }
 
+  // Function to get the label class based on the analysis
+  const getLabelClass = (label) => {
+    switch (label) {
+      case 'Positive':
+        return 'positive';
+      case 'Neutral':
+        return 'neutral';
+      case 'Negative':
+        return 'negative';
+      default:
+        return '';
+    }
+  };
+
   return (
-    <div className="comparison-container">
-      {modelReviews.length > 0 && actualReviews.length > 0 ? (
-        modelReviews.map((modelReview, index) => (
-          <div className="review-comparison" key={index}>
-            <div className="review">
-              <h3>Model's Review</h3>
-              <p><strong>{modelReview.name}</strong></p>
-              <p>{modelReview.message}</p>
-              <div>
-                <h4>Analysis Scores:</h4>
-                <ul>
-                  {Object.keys(modelReview.analysis).map((category) => (
-                    <li key={category}>
-                      <strong>{category}:</strong> {modelReview.analysis[category][0].label} ({modelReview.analysis[category][0].score.toFixed(2)})
-                    </li>
+    <div>
+      <h1>Compare Reviews</h1>
+      <div className="reviews-container">
+        {modelData && actualData && modelData.map((item, index) => (
+          <div key={index} className="reviews-column">
+            <div className="review-card">
+              <h3>{item.name}</h3>
+              <p>{item.message}</p>
+
+              {/* Analysis side by side */}
+              <div className="analysis-container">
+                <div className="analysis-box">
+                  <h4>Model Analysis</h4>
+                  {item.analysis && Object.keys(item.analysis).map((category, i) => (
+                    <div key={i}>
+                      <strong>{category}:</strong>
+                      <p className={getLabelClass(item.analysis[category][0].label)}>
+                        {item.analysis[category][0].label}
+                      </p>
+                    </div>
                   ))}
-                </ul>
+                </div>
+
+                <div className="analysis-box">
+                  <h4>Actual Analysis</h4>
+                  {actualData[index] && actualData[index].analysis && Object.keys(actualData[index].analysis).map((category, i) => (
+                    <div key={i}>
+                      <strong>{category}:</strong>
+                      <p className={getLabelClass(actualData[index].analysis[category][0].label)}>
+                        {actualData[index].analysis[category][0].label}
+                      </p>
+                    </div>
+                  ))}
+                </div>
               </div>
             </div>
-
-            <div className="review">
-              <h3>Actual Review</h3>
-              <p><strong>{actualReviews[index]?.name}</strong></p>
-              <p>{actualReviews[index]?.message}</p>
-            </div>
           </div>
-        ))
-      ) : (
-        <p>Loading...</p>
-      )}
+        ))}
+      </div>
     </div>
   );
 };
