@@ -1,10 +1,11 @@
 import { useState, useEffect } from 'react';
-import './review.css'
+import './review.css';
 
 const CompareReviews = () => {
   const [modelData, setModelData] = useState(null);
   const [actualData, setActualData] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [searchQuery, setSearchQuery] = useState(''); // State for the search query
 
   useEffect(() => {
     // Fetch the model data and actual data
@@ -41,11 +42,27 @@ const CompareReviews = () => {
     }
   };
 
+  // Filter model data based on search query
+  const filteredModelData = modelData.filter((item) =>
+    item.name.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
   return (
     <div>
       <h1>Compare Reviews</h1>
+      {/* Search Input */}
+      <div className="search-container">
+        <input
+          type="text"
+          placeholder="Search by name..."
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+          className="search-input"
+        />
+      </div>
+
       <div className="reviews-container">
-        {modelData && actualData && modelData.map((item, index) => (
+        {filteredModelData.map((item, index) => (
           <div key={index} className="reviews-column">
             <div className="review-card">
               <h3>{item.name}</h3>
@@ -55,26 +72,29 @@ const CompareReviews = () => {
               <div className="analysis-container">
                 <div className="analysis-box">
                   <h4>Model Analysis</h4>
-                  {item.analysis && Object.keys(item.analysis).map((category, i) => (
-                    <div key={i}>
-                      <strong>{category}:</strong>
-                      <p className={getLabelClass(item.analysis[category][0].label)}>
-                        {item.analysis[category][0].label}
-                      </p>
-                    </div>
-                  ))}
+                  {item.analysis &&
+                    Object.keys(item.analysis).map((category, i) => (
+                      <div key={i}>
+                        <strong>{category}:</strong>
+                        <p className={getLabelClass(item.analysis[category][0].label)}>
+                          {item.analysis[category][0].label}
+                        </p>
+                      </div>
+                    ))}
                 </div>
 
                 <div className="analysis-box">
                   <h4>Actual Analysis</h4>
-                  {actualData[index] && actualData[index].analysis && Object.keys(actualData[index].analysis).map((category, i) => (
-                    <div key={i}>
-                      <strong>{category}:</strong>
-                      <p className={getLabelClass(actualData[index].analysis[category][0].label)}>
-                        {actualData[index].analysis[category][0].label}
-                      </p>
-                    </div>
-                  ))}
+                  {actualData[index] &&
+                    actualData[index].analysis &&
+                    Object.keys(actualData[index].analysis).map((category, i) => (
+                      <div key={i}>
+                        <strong>{category}:</strong>
+                        <p className={getLabelClass(actualData[index].analysis[category][0].label)}>
+                          {actualData[index].analysis[category][0].label}
+                        </p>
+                      </div>
+                    ))}
                 </div>
               </div>
             </div>

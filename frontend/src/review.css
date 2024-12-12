@@ -117,3 +117,17 @@ h1 {
     flex-direction: column;
   }
 }
+
+.search-container {
+  text-align: center;
+  margin: 20px 0;
+}
+
+.search-input {
+  padding: 10px;
+  font-size: 1rem;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  width: 80%;
+  max-width: 400px;
+}
