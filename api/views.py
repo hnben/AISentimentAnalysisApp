@@ -1,7 +1,7 @@
 from django.views.decorators.csrf import csrf_exempt
-from django.http import JsonResponse
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
+from rest_framework import status
 from .models import SentimentAnalysis
 from django.core.cache import cache
 
@@ -16,11 +16,31 @@ def get_hi(request):
     }
     return Response(data)
 
+@api_view(['GET'])
+def get_analysis(request):
+    # Retrieve all records from the SentimentAnalysis model
+    sentiment_analyses = SentimentAnalysis.objects.all()
+
+    # Prepare a list of dictionaries to send in the response
+    analysis_data = []
+    for analysis in sentiment_analyses:
+        analysis_data.append({
+            'name': analysis.name,
+            'message': analysis.message,
+            'analysis': analysis.analysis
+        })
+
+    # Return the data as a JSON response
+    return Response(analysis_data, status=status.HTTP_200_OK)
+
+
+
 @api_view(['POST'])
 def post_analysis(request):
-    # Extract the message from the incoming request
+    # Extract the message and name from the incoming request
     data = request.data
     message = data.get('message', '')
+    name = data.get('name', 'Unknown')  # Default to 'Unknown' if no name is provided
 
     if not message:
         return Response({'error': 'Message not provided'}, status=400)
@@ -30,15 +50,21 @@ def post_analysis(request):
 
     if cached_result:
         # If the result is cached, return it
-        return Response(cached_result)
+        return Response({
+            'name': name,
+            'analysis_result': cached_result
+        })
 
     # Check if the result is already in the database
     existing_result = SentimentAnalysis.objects.filter(message=message).first()
 
     if existing_result:
         # If it's in the database, return the cached result
-        cache.set(message, existing_result.analysis_result, timeout=60*15)  # Cache timeout for 15 minutes
-        return Response(existing_result.analysis_result)
+        cache.set(message, existing_result.analysis, timeout=60*15)  # Cache timeout for 15 minutes
+        return Response({
+            'name': existing_result.name,
+            'analysis_result': existing_result.analysis
+        })
 
     # If the message is not found in cache or database, perform sentiment analysis
     tokenizer = AutoTokenizer.from_pretrained("yangheng/deberta-v3-base-absa-v1.1")
@@ -54,9 +80,17 @@ def post_analysis(request):
     }
 
     # Store the result in the database
-    SentimentAnalysis.objects.create(message=message, analysis_result=analysis_result)
+    sentiment_analysis = SentimentAnalysis.objects.create(
+        name=name, 
+        message=message, 
+        analysis=analysis_result
+    )
 
     # Cache the result for future requests
     cache.set(message, analysis_result, timeout=60*15)  # Cache timeout for 15 minutes
 
-    return Response(analysis_result)
+    # Return both name and analysis result in the response
+    return Response({
+        'name': sentiment_analysis.name,
+        'analysis_result': analysis_result
+    })

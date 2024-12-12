@@ -1,8 +1,9 @@
 from django.db import models
 
 class SentimentAnalysis(models.Model):
-    message = models.TextField(unique=True)
-    analysis_result = models.JSONField()  # or use TextField to store results as JSON string
+    name = models.CharField(max_length=255, default="Unknown") 
+    message = models.TextField()
+    analysis = models.JSONField(default=dict)
 
     def __str__(self):
-        return self.message
+        return self.name
