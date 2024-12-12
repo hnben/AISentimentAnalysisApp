@@ -1,3 +1,4 @@
+import json
 from django.views.decorators.csrf import csrf_exempt
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
@@ -17,6 +18,23 @@ def get_hi(request):
         'status': 'success'
     }
     return Response(data)
+
+@api_view(['GET'])
+def get_actual(request):
+    # Get the absolute path of the directory where this file (views.py) is located
+    base_dir = os.path.dirname(os.path.abspath(__file__))
+    # Construct the full path to the user.json file
+    json_file_path = os.path.join(base_dir, 'user.json')
+
+    # Load the data from the user.json file
+    try:
+        with open(json_file_path, 'r') as file:
+            user_data = json.load(file)
+    except FileNotFoundError:
+        return Response({"error": "File not found."}, status=status.HTTP_404_NOT_FOUND)
+
+    # Return the data as a JSON response
+    return Response(user_data, status=status.HTTP_200_OK)
 
 @api_view(['GET'])
 def get_analysis(request):
